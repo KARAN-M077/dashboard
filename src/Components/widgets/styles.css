@@ -1,0 +1,43 @@
+/* Initially hide the scrollbar */
+.scrollbar-custom {
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For Internet Explorer and Edge */
+
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Opera */
+}
+
+/* Show scrollbar on hover */
+.scrollbar-custom:hover {
+    scrollbar-width: thin; /* For Firefox */
+    -ms-overflow-style: auto; /* For Internet Explorer and Edge */
+}
+
+.scrollbar-custom:hover::-webkit-scrollbar {
+    display: block; /* For Chrome, Safari, and Opera */
+}
+
+/* Advanced styling for the visible scrollbar */
+.scrollbar-custom::-webkit-scrollbar {
+    width: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #888, #555);
+    border-radius: 10px;
+    border: 2px solid #f1f1f1;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #555, #333);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,111 @@
+.navicon {
+    background: transparent;
+    border: none;
+    color: rgb(0, 0, 0);
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: none; /* Initially hide the bar icon */
+  }
+  @media (max-width: 750px) {
+    .navicon {
+      display: block;
+    }
+  } 
+  .nav{
+    display: flex;
+    justify-content: center;
+}
+.navb{
+    font-family: "Work Sans";
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 90px;
+    border-radius: 20px;
+    padding: 0% 5%;
+}
+.navb h1{
+    font-family: "Work Sans";
+    font-size: 200%;
+    font-weight: 600;
+    color: #1B4F4A;
+}
+.navb1{
+    margin-top: 1%;
+    display: flex;
+    flex-direction: row;
+    gap: 35px;
+    align-items: center;
+    justify-content: center;
+}
+.navic{
+    color: black;
+    font-size: 21px;
+}
+.lk{
+    font-size: 16px;
+    text-decoration: none;
+    color: #1B4F4A;
+    transition: 400ms ease-in-out;
+}
+.lk1{
+    padding: 2% 4%;
+    font-size: 100%;
+    font-weight: 500;
+    width: 130px;
+    height: 40px;
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: black;
+    transition: 400ms ease-in-out;
+}
+.lk:hover{
+    background-color: #ffb38e;
+    border-radius: 8px;
+    color: #1B4F4A;
+    padding: 5px 25px;
+}
+.lk12{
+    background-color: #ffb38e;
+    padding:5px 15px ;
+    border-radius: 5px;
+    color: #10302d;
+    transition: 100ms ease-in-out;
+}
+.lk12:active{
+    background-color: #fa9461;
+    color: #000000;
+}
+@media screen and (max-width:756px) and (min-width: 250px){
+    .navb1{
+        display: flex;
+        flex-direction: column;
+        background-color: #FAF9F5;
+        width: 100%;
+        z-index: 999;
+        margin-top: 5%;
+        align-items: center;
+        padding-bottom: 20px;
+        border: 2px solid black;
+        box-shadow:6px 6px;
+        border-radius: 20px;
+        padding:3%;
+        font-weight: 600;
+    }
+    .lk{
+        padding-top: 10px;
+        justify-content: start;
+    }
+    .navb{
+        width: 100%;
+    }
+    .nav{
+        padding: 0% 3%;
+    }
+}

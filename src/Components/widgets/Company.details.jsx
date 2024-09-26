@@ -1,88 +1,174 @@
-// src/widgets/CompanyDetail.jsx
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import placementDriveData from '../data/company.drive';
-import { Bars3Icon, XMarkIcon, UserCircleIcon } from '@heroicons/react/24/solid';
-function CompanyDetail({ isSidebarOpen, toggleSidebar }) {
-  const { companyId } = useParams();
-  console.log(companyId);
-  const company = placementDriveData.find(c => c.id === parseInt(companyId,10));
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { MapPinIcon, CurrencyRupeeIcon, CalendarIcon, ArrowLeftCircleIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
 
-  if (!company) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <h1 className="text-2xl font-bold text-red-500">Company not found.</h1>
-      </div>
-    );
+function CompanyDetail() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { placement, eligibleStudents, studentId } = location.state || {};
+  const [isOptedIn, setIsOptedIn] = useState(false);
+  const [isOptedOut, setIsOptedOut] = useState(false);
+
+  if (!placement) {
+    return <div>No company data available.</div>;
   }
+
+  const isEligible = eligibleStudents ? eligibleStudents.includes(studentId) : false;
+
+  const handleOptIn = async () => {
+    const confirmation = window.confirm('Are you sure you want to opt-in?');
+    if (confirmation) {
+      try {
+        const response = await fetch(`https://devsquad-api.onrender.com/api/company/opt-status/${studentId}/${placement.companyId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ opted_status: 'optin' })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        // Update UI state
+        setIsOptedIn(true);
+        setIsOptedOut(false);
+
+      } catch (error) {
+        console.error('Error opting in:', error); // More detailed error logging
+      }
+    }
+  };
+
+  const handleOptOut = async () => {
+    const confirmation = window.confirm('Are you sure you want to opt-out?');
+    if (confirmation) {
+      try {
+        const response = await fetch(`https://devsquad-api.onrender.com/api/company/opt-status/${studentId}/${placement.companyId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ opted_status: 'optout' })
+        });
+
+        if (response.ok) {
+          // Update UI state
+          setIsOptedOut(true);
+          setIsOptedIn(false);
+        } else {
+          console.error('Failed to opt-out');
+        }
+      } catch (error) {
+        console.error('Error opting out:', error);
+      }
+    }
+  };
 
   return (
     <>
-      <nav className="bg-transparent w-full flex justify-between items-center">
-        {/* Desktop View: Profile Icon on the Right */}
-        <div className="hidden lg:flex items-center ml-auto px-10">
-          <UserCircleIcon className="h-12 w-12 text-gray-600" />
+      <Link to='/dashboard/studentplacementdetails'>
+        <ArrowLeftCircleIcon className='w-10 h-10 relative left-5 top-5'/>
+      </Link>
+      <div className="bg-white p-6 w-3/4 mx-auto my-10 border border-gray-300 rounded-lg">
+        <h2 className="text-2xl font-bold mb-4">{placement.companyName}</h2>
+
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center">
+            <MapPinIcon className="h-5 w-5 text-gray-600 mr-2" />
+            <span>{placement.companyLocation}</span>
+          </div>
+          <div className="flex items-center">
+            <CalendarIcon className="h-5 w-5 text-gray-600 mr-2" />
+            <span>{new Date(placement.driveDate).toLocaleDateString()}</span>
+          </div>
         </div>
 
-        {/* Mobile View: Bars Icon */}
-        <div className="lg:hidden flex items-center ml-auto">
-          {isSidebarOpen ? (
-            <XMarkIcon
-              onClick={toggleSidebar}
-              className="h-8 w-8 text-gray-600 cursor-pointer"
-            />
+        <div className="mb-4">
+          <p className="font-bold mb-2">Roles and Salaries:</p>
+          {placement.rolesAndSalary.map((role, index) => (
+            <div key={index} className="flex justify-between">
+              <span>{role.role}</span>
+              <span className="flex items-center">
+                <CurrencyRupeeIcon className="h-5 w-5 text-gray-500 mr-1" />
+                {role.salary} PA
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mb-4">
+          <p className="font-bold mb-2">Eligibility Criteria:</p>
+          <p>10th Marks: {placement.eligibilityCriteria.minTenthMarks}%</p>
+          <p>12th Marks: {placement.eligibilityCriteria.minTwelfthMarks}%</p>
+          <p>CGPA: {placement.eligibilityCriteria.minCGPA}</p>
+          <p>No History of Arrears: {placement.eligibilityCriteria.noHistoryOfArrears ? 'Yes' : 'No'}</p>
+          <p>Max Arrears: {placement.eligibilityCriteria.maxArrears}</p>
+        </div>
+
+        <div className="mb-4">
+          <p className="font-bold mb-2">Technical Skills Required:</p>
+          {placement.techStackEligibility.isTechStackRequired ? (
+            <ul>
+              {placement.techStackEligibility.requiredSkills.map((skill, index) => (
+                <li key={index}>{skill}</li>
+              ))}
+            </ul>
           ) : (
-            <Bars3Icon
-              onClick={toggleSidebar}
-              className="h-8 w-8 text-gray-600 cursor-pointer"
-            />
+            <p>No specific tech stack required</p>
           )}
         </div>
-      </nav>
-      {/* Company Details */}
-      <div className="p-6 max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-extrabold text-gray-800">{company.companyName}</h1>
-      <p className="text-lg text-gray-600">Location: {company.companyLocation}</p>
-      <p className="text-lg text-gray-600">Drive Date: {new Date(company.driveDate).toLocaleDateString()}</p>
 
-      <div className="mt-6">
-        <h2 className="text-2xl font-semibold text-gray-700 border-b pb-2">Requirements</h2>
-        <ul className="list-disc list-inside mt-2">
-          {company.requirements.map((req, index) => (
-            <li key={index} className="text-gray-600">{req}</li>
+        <div className="mb-4">
+          <p className="font-bold mb-2">Rounds:</p>
+          {placement.roundDetails.map((round, index) => (
+            <div key={index}>
+              <p>Round {round.roundNumber}: {round.description}</p>
+              <p>Venue: {round.venue}</p>
+            </div>
           ))}
-        </ul>
-      </div>
+        </div>
 
-      <div className="mt-6">
-        <h2 className="text-2xl font-semibold text-gray-700 border-b pb-2">Roles and Salaries</h2>
-        <ul className="mt-2">
-          {company.rolesAndSalary.map((roleInfo, index) => (
-            <li key={index} className="flex justify-between py-2 border-b text-gray-600">
-              <span>{roleInfo.role}</span>
-              <span className="font-bold">{roleInfo.salary} PA</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+        <div>
+          <p className="font-bold mb-2">Eligible Departments:</p>
+          <ul>
+            {placement.eligibleDepartments.map((dept, index) => (
+              <li key={index}>{dept}</li>
+            ))}
+          </ul>
+        </div>
 
-      <div className="mt-6">
-        <h2 className="text-2xl font-semibold text-gray-700 border-b pb-2">Number of Rounds</h2>
-        <p className="text-gray-600">{company.numberOfRounds}</p>
-      </div>
+        <div className="mb-4 flex justify-center">
+  {isEligible ? (
+    placement.optedStudents.includes(studentId) || isOptedIn ? (
+      <p className="text-green-500 font-bold">Opted-In</p>
+    ) : placement.optedOutStudents.includes(studentId) || isOptedOut ? (
+      <p className="text-red-500 font-bold">Opted-Out</p>
+    ) : (
+      <>
+        <button 
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg" 
+          onClick={handleOptIn}
+        >
+          Opt-In
+        </button>
+        <button 
+          className="bg-white text-black border-2 border-gray-400 px-4 py-2 rounded-lg ml-4" 
+          onClick={handleOptOut}
+        >
+          Opt-Out
+        </button>
+      </>
+    )
+  ) : (
+    <p className="text-red-500 font-bold">Not Eligible</p>
+  )}
+</div>
 
-      <div className="mt-6">
-        <h2 className="text-2xl font-semibold text-gray-700 border-b pb-2">Round Details</h2>
-        <ul className="mt-2">
-          {company.roundDetails.map((round, index) => (
-            <li key={index} className="flex justify-between py-2 border-b text-gray-600">
-              <span>Round {round.roundNumber}: {round.description}</span>
-              <span className="font-semibold text-blue-500">{round.venue}</span>
-            </li>
-          ))}
-        </ul>
+
       </div>
-    </div>
     </>
   );
 }

@@ -28,15 +28,12 @@ function Home() {
   }, [active, navigate]);
 
   return (
-    <div className="relative w-screen min-h-screen overflow-auto bg-gray-100">
-      {/* Sidebar */}
+    <div className="relative w-screen min-h-screen overflow-x-hidden bg-gray-100">
       <Sidebar active={active} setActive={setActive} isSidebarOpen={isSidebarOpen} />
-
-      {/* Content Area */}
       <div className="p-4">
         {location.pathname === "/dashboard/studentdetails" && <StudentDetails isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
         {location.pathname === "/dashboard/studentplacementdetails" && <StudentPlacement isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
-        {location.pathname.startsWith("/dashboard/studentplacement/company/") && <CompanyDetail isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
+        {location.pathname.startsWith("/company/") && <CompanyDetail isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
       </div>
     </div>
   );

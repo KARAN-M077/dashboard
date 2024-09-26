@@ -3,7 +3,6 @@ import Animation2 from '../../../assets/Animation/Animation2';
 import { Link as ScrollLink } from 'react-scroll'; // Import ScrollLink from react-scroll
 import { Link as RouterLink } from 'react-router-dom'; // Import Link from react-router-dom
 import Service from '../Services/Service';
-import Navbar from '../Navbar/Navbar';
 import Blog from '../Blogs/Blog';
 import Test from '../Testimonials/Test';
 import Footer from '../Footer/Footer';
